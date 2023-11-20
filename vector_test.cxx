@@ -34,12 +34,20 @@ test_result vector_test() {
             }
         }
 
+
+        /**
+         * test iterator constructor
+         */
+        ministl::vector<test_struct> vec2(vec.begin(), vec.end());
+
         /**
          * test operator[]
          */
         for (int i = 0; i < n; i ++ ) {
             auto [a, b] = vec[i];
             assert(a == i && b == i);
+            auto [a2, b2] = vec2[i];
+            assert(a2 == i && b2 == i);
             score ++ ;
             full_score ++ ;
         }

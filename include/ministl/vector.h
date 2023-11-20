@@ -20,21 +20,21 @@ public:
 
 private:
     size_type capacity;
-    iterator begin;
-    iterator end;
+    iterator begin_iter;
+    iterator end_iter;
 
     constexpr static size_type min_capacity = 16;
 
     constexpr static size_type value_size = sizeof (T);
 
     void grow() {
-        auto old_begin = begin;
+        auto old_begin = begin_iter;
         auto old_size = size();
         capacity <<= 1;
-        begin = reinterpret_cast<iterator>(::new byte[value_size * capacity]);
-        end = begin + old_size;
+        begin_iter = reinterpret_cast<iterator>(::new byte[value_size * capacity]);
+        end_iter = begin_iter + old_size;
         for (int i = 0; i < old_size; i ++ ) {
-            begin[i] = std::move(old_begin[i]);
+            begin_iter[i] = std::move(old_begin[i]);
         }
         ::delete[] old_begin;
     }
@@ -44,17 +44,21 @@ public:
 
     vector(size_type n) :
         capacity(std::max(min_capacity, n)),
-        begin(reinterpret_cast<iterator>(::new byte[value_size * capacity])),
-        end(begin + n) {}
+        begin_iter(reinterpret_cast<iterator>(::new byte[value_size * capacity])),
+        end_iter(begin_iter + n) {}
 
     vector(size_type n, const value_type& init_val) : vector(n) {
-        for (int i = 0; i < n; i ++ ) begin[i] = init_val;
+        for (int i = 0; i < n; i ++ ) begin_iter[i] = init_val;
     }
 
     template<typename Iter>
-    vector(const Iter& first, const Iter& second) : 
+    vector(Iter first, Iter second) : 
         vector(second > first ? (second - first) : 0) {
         static_assert(std::is_same_v<Iter, iterator>);
+        size_type n = second - first;
+        for (int i = 0; i < n; i ++, first ++ )
+            begin_iter[i] = *first;
+        assert(first == second);
     }
 
     void push_back(const value_type& rhs);
@@ -65,15 +69,15 @@ public:
     void emplace_back(Args&&... args);
 
     size_type size() noexcept {
-        return (end - begin);
+        return (end_iter - begin_iter);
     }
 
     bool empty() noexcept {
-        return begin == end;
+        return begin_iter == end_iter;
     }
 
     value_type& operator[](int idx) {
-        return begin[idx];
+        return begin_iter[idx];
     }
 
     value_type& at(int idx) {
@@ -81,6 +85,10 @@ public:
             throw std::runtime_error("index outof bound");
         return (*this)[idx];
     }
+
+    iterator begin() { return begin_iter; }
+
+    iterator end() { return end_iter; }
 };
 
 template<typename T>
@@ -88,8 +96,8 @@ void vector<T>::push_back(const value_type& rhs) {
     if (size() >= capacity) [[unlikely]] { 
         grow();
     }
-    *end = rhs;
-    end ++ ;
+    *end_iter = rhs;
+    end_iter ++ ;
 }
 
 template<typename T>
@@ -105,8 +113,8 @@ void vector<T>::emplace_back(Args&&... args) {
         grow();
     }
     // TODO: use ministl:forward
-    ::new (end) value_type(std::forward<Args>(args)...);
-    end ++ ;
+    ::new (end_iter) value_type(std::forward<Args>(args)...);
+    end_iter ++ ;
 }
 
 };
