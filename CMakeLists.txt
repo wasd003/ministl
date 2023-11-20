@@ -11,7 +11,9 @@ set(CMAKE_CXX_STANDARD 20)
 
 green_message("BUILD LEVEL: ${BUILD_LEVEL}")
 
-add_executable(${EXE} main.cc)
+file (GLOB SRC *.cxx)
+
+add_executable(${EXE} ${SRC})
 
 target_include_directories(${EXE} PUBLIC ${MINISTL_PUBLIC_INCLUDE_DIR})
 
