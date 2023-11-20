@@ -40,6 +40,9 @@ private:
     }
 
 public:
+    /**
+     * Constructor 
+     */
     vector() : vector(0) {}
 
     vector(size_type n) :
@@ -61,6 +64,51 @@ public:
         assert(first == second);
     }
 
+    vector(const vector& rhs) : vector(rhs.capacity) {
+        assert(size() == rhs.size());
+        auto n = size();
+        for (int i = 0; i < n; i ++ ) begin_iter[i] = rhs.begin_iter[i];
+    }
+
+    /**
+     * TODO: reuse current memory, instead of just deleting them
+     */
+    vector& operator=(const vector& rhs) {
+        if (this == &rhs) return *this;
+        ::delete[] begin_iter;
+        capacity = rhs.capacity;
+        begin_iter = reinterpret_cast<iterator>(::new byte[rhs.capacity * value_size]);
+        end_iter = begin_iter + rhs.size();
+        auto n = size();
+        for (int i = 0; i < n; i ++ ) begin_iter[i] = rhs.begin_iter[i];
+        return *this;
+    }
+
+    vector(vector&& rhs) : capacity(rhs.capacity), begin_iter(rhs.begin_iter), end_iter(rhs.end_iter) {
+        rhs.begin_iter = rhs.end_iter = nullptr;
+        rhs.capacity = 0;
+    }
+
+    vector& operator=(vector&& rhs) {
+        assert(this != &rhs);
+        ::delete[] begin_iter;
+        capacity = rhs.capacity;
+        begin_iter = rhs.begin_iter;
+        end_iter = rhs.end_iter;
+        rhs.begin_iter = rhs.end_iter = nullptr;
+        rhs.capacity = 0;
+        return *this;
+    }
+
+    ~vector() {
+        ::delete[] begin_iter;
+        begin_iter = end_iter = nullptr;
+    }
+
+
+    /**
+     * Operation
+     */
     void push_back(const value_type& rhs);
 
     void push_back(value_type&& rhs);
@@ -68,7 +116,7 @@ public:
     template<typename... Args>
     void emplace_back(Args&&... args);
 
-    size_type size() noexcept {
+    size_type size() const noexcept {
         return (end_iter - begin_iter);
     }
 
@@ -86,9 +134,9 @@ public:
         return (*this)[idx];
     }
 
-    iterator begin() { return begin_iter; }
+    iterator begin() noexcept { return begin_iter; }
 
-    iterator end() { return end_iter; }
+    iterator end() noexcept { return end_iter; }
 };
 
 template<typename T>
