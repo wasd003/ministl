@@ -135,6 +135,18 @@ static test_result test_init_list_ctor() {
     return {score, full_score};
 }
 
+static test_result test_init_list_assignment() {
+    int score = 0, full_score = 0;
+    ministl::vector<int> vec = {1, 2, 3};
+    vec = {0, 1, 2};
+    for (auto i = 0; i < vec.size(); i ++ ) {
+        assert(vec[i] == i);
+        score ++ ;
+        full_score ++ ;
+    }
+    return {score, full_score};
+}
+
 test_result vector_test() {
     int score = 0, full_score = 0;
 
@@ -154,6 +166,9 @@ test_result vector_test() {
     score += tmp.first, full_score += tmp.second;
 
     tmp = test_init_list_ctor();
+    score += tmp.first, full_score += tmp.second;
+
+    tmp = test_init_list_assignment();
     score += tmp.first, full_score += tmp.second;
 
     return {score, full_score};

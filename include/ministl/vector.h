@@ -1,4 +1,5 @@
 #pragma once
+#include <ministl/log.h>
 #include <cstdlib>
 #include <cstdint>
 #include <algorithm>
@@ -89,6 +90,16 @@ public:
         end_iter = begin_iter + rhs.size();
         auto n = size();
         for (int i = 0; i < n; i ++ ) begin_iter[i] = rhs.begin_iter[i];
+        return *this;
+    }
+
+    vector& operator=(const std::initializer_list<value_type>& list) {
+        ::delete []begin_iter;
+        capacity = std::max(min_capacity, list.size());
+        begin_iter = reinterpret_cast<iterator>(::new byte[capacity * value_size]);
+        end_iter = begin_iter + list.size();
+        auto n = size(), i = 0;
+        for (auto val : list) begin_iter[i ++ ] = val;
         return *this;
     }
 
