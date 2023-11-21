@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <algorithm>
+#include <initializer_list>
 #include <stdexcept>
 #include <type_traits>
 #include <cassert>
@@ -62,6 +63,13 @@ public:
         for (int i = 0; i < n; i ++, first ++ )
             begin_iter[i] = *first;
         assert(first == second);
+    }
+
+    vector(const std::initializer_list<value_type>& list) : vector(list.size()) {
+        size_type i = 0;
+        for (auto val : list) {
+            begin_iter[i ++ ] = val;
+        }
     }
 
     vector(const vector& rhs) : vector(rhs.capacity) {
