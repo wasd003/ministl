@@ -153,9 +153,17 @@ public:
         return (*this)[idx];
     }
 
+
+    /**
+     * Iterator
+     */
     iterator begin() noexcept { return begin_iter; }
 
     iterator end() noexcept { return end_iter; }
+
+    const iterator begin() const noexcept { return begin_iter; }
+
+    const iterator end() const noexcept { return end_iter; }
 };
 
 template<typename T>
