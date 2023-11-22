@@ -1,13 +1,12 @@
 #pragma once
 #include <ministl/log.h>
+#include <ministl/reverse_iterator.h>
 #include <cstdlib>
 #include <cstdint>
 #include <algorithm>
 #include <initializer_list>
 #include <stdexcept>
-#include <type_traits>
 #include <cassert>
-#include <utility>
 
 namespace ministl
 {
@@ -164,6 +163,22 @@ public:
     const iterator begin() const noexcept { return begin_iter; }
 
     const iterator end() const noexcept { return end_iter; }
+
+    ministl::reverse_iterator<iterator> rbegin() {
+        return reverse_iterator<iterator> (end());
+    }
+
+    ministl::reverse_iterator<iterator> rend() {
+        return reverse_iterator<iterator> (begin());
+    }
+
+    const ministl::reverse_iterator<iterator> rbegin() const {
+        return reverse_iterator<iterator> (end());
+    }
+
+    const ministl::reverse_iterator<iterator> rend() const {
+        return reverse_iterator<iterator> (begin());
+    }
 };
 
 template<typename T>

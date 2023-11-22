@@ -2,6 +2,9 @@
 
 #include <ministl/iterator.h>
 
+namespace ministl
+{
+
 template<typename Iter>
 class reverse_iterator {
 public:
@@ -78,4 +81,14 @@ public: // basic operation
         return *this;
     }
 
+    bool operator=(const reverse_iterator& rhs) const {
+        return current == rhs.current;
+    }
+
+    bool operator!=(const reverse_iterator& rhs) const {
+        return current != rhs.current;
+    }
+
 };
+
+}

@@ -147,6 +147,18 @@ static test_result test_init_list_assignment() {
     return {score, full_score};
 }
 
+static test_result test_reverse_iterator() {
+    int score = 0, full_score = 0;
+    ministl::vector<int> vec = {1, 2, 3};
+    int val = 3;
+    for (auto iter = vec.rbegin(); iter != vec.rend(); iter ++ ) {
+        full_score ++ ;
+        assert(*iter == val -- );
+        score ++ ;
+    }
+    return {score, full_score};
+}
+
 test_result vector_test() {
     int score = 0, full_score = 0;
 
@@ -169,6 +181,9 @@ test_result vector_test() {
     score += tmp.first, full_score += tmp.second;
 
     tmp = test_init_list_assignment();
+    score += tmp.first, full_score += tmp.second;
+
+    tmp = test_reverse_iterator();
     score += tmp.first, full_score += tmp.second;
 
     return {score, full_score};
