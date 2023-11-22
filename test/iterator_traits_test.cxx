@@ -21,18 +21,38 @@ test_result vector_iterator_test() {
 test_result iterator_category_checker_test() {
     struct input_iter {
         using iterator_category = ministl::input_iterator_tag;
+        using value_type = int;
+        using pointer = value_type*;
+        using reference = value_type&;
+        using difference_type = ptrdiff_t;
     };
     struct output_iter {
         using iterator_category = ministl::output_iterator_tag;
+        using value_type = int;
+        using pointer = value_type*;
+        using reference = value_type&;
+        using difference_type = ptrdiff_t;
     };
     struct forward_iter {
         using iterator_category = ministl::forward_iterator_tag;
+        using value_type = int;
+        using pointer = value_type*;
+        using reference = value_type&;
+        using difference_type = ptrdiff_t;
     };
     struct bidirectional_iter {
         using iterator_category = ministl::bidirectional_iterator_tag;
+        using value_type = int;
+        using pointer = value_type*;
+        using reference = value_type&;
+        using difference_type = ptrdiff_t;
     };
     struct random_access_iter {
         using iterator_category = ministl::random_access_iterator_tag;
+        using value_type = int;
+        using pointer = value_type*;
+        using reference = value_type&;
+        using difference_type = ptrdiff_t;
     };
     static_assert(ministl::is_input_iterator<input_iter>::value);
     static_assert(!ministl::is_input_iterator<output_iter>::value);
@@ -45,6 +65,8 @@ test_result iterator_category_checker_test() {
     static_assert(ministl::is_forward_iterator<random_access_iter>::value);
     static_assert(ministl::is_bidirectional_iterator<random_access_iter>::value);
     static_assert(ministl::is_random_access_iterator<random_access_iter>::value);
+    static_assert(ministl::is_random_access_iterator<int*>::value);
+    static_assert(ministl::is_random_access_iterator<const char*>::value);
 
     return {0, 0};
 };

@@ -61,13 +61,17 @@ struct is_iterator_helper
 
 template<typename Iter, typename TargetCategory>
 struct is_iterator_helper<Iter, TargetCategory,
-    typename std::enable_if_t<std::is_convertible<typename Iter::iterator_category, TargetCategory>::value>>
+    typename std::enable_if_t<std::is_convertible<
+                                typename ministl::iterator_traits<Iter>::iterator_category,
+                                TargetCategory>::value>>
     :ministl::true_type
 {};
 
 template<typename Iter, typename TargetCategory>
 struct is_iterator_helper<Iter, TargetCategory,
-    typename std::enable_if_t<!std::is_convertible<typename Iter::iterator_category, TargetCategory>::value>>
+    typename std::enable_if_t<!std::is_convertible<
+                                typename ministl::iterator_traits<Iter>::iterator_category,
+                                TargetCategory>::value>>
     :ministl::false_type
 {};
 
