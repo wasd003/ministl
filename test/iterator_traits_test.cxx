@@ -5,9 +5,13 @@
 test_result vector_iterator_test() {
     int score = 0, full_score = 0;
 
+    // TODO: replace std::is_same_v with ministl ver.
     static_assert(std::is_same_v<ministl::iterator_traits<
                   ministl::vector<int>::iterator>::iterator_category,
                   ministl::random_access_iterator_tag>);
+    score ++ , full_score ++ ;
+
+    static_assert(!ministl::has_value_type<ministl::vector<int>::iterator>::value);
     score ++ , full_score ++ ;
 
     return {score, full_score};

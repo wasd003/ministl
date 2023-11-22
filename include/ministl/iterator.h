@@ -54,4 +54,19 @@ struct iterator_traits<const T*> {
     using difference_type = ptrdiff_t;
 };
 
+/**
+ * some other ierator traits.
+ * just for practice
+ */
+
+template<typename Iter, typename = ministl::__void_t<>>
+struct has_value_type {
+    constexpr static bool value = false;
+};
+
+template<typename Iter>
+struct has_value_type<Iter, typename Iter::value_type> {
+    constexpr static bool value = true;
+};
+
 }
