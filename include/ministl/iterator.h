@@ -146,4 +146,26 @@ void advance(Iter& iter, DistanceType n) {
  * distance operation
  */
 
+// distance for input && forward && bidirectional iterator
+template<typename Iter>
+decltype(auto) distance_dispatch(Iter begin, Iter end, bidirectional_iterator_tag) {
+    typename ministl::iterator_traits<Iter>::difference_type ans = 0;
+    for (auto cur_begin = begin, cur_end = end;
+            cur_begin != end && cur_end != begin;
+            ++ cur_begin, ++ cur_end, ++ ans);
+    return ans;
+}
+
+// distance for random access iterator
+template<typename Iter>
+decltype(auto) distance_dispatch(Iter begin, Iter end, random_access_iterator_tag) {
+    return end - begin;
+}
+
+template<typename Iter>
+decltype(auto) distance(Iter begin, Iter end) {
+    return distance_dispatch(begin, end,
+            typename ministl::iterator_traits<Iter>::iterator_category {});
+}
+
 }

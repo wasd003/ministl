@@ -83,6 +83,19 @@ test_result iterator_advance_test() {
     return {score, full_score};
 }
 
+test_result iterator_distance_test() {
+    int score = 0, full_score = 0;
+    ministl::vector<int> vec = {1, 2, 3, 4, 5};
+    ministl::vector<int>::iterator iter = vec.begin();
+    auto base = iter;
+    ministl::advance(iter, 2);
+    full_score ++ ;
+    assert(ministl::distance(base, iter) == 2);
+    score ++ ;
+
+    return {score, full_score};
+}
+
 test_result iterator_traits_test() {
     int score = 0, full_score = 0;
     test_result tmp;
@@ -94,6 +107,9 @@ test_result iterator_traits_test() {
     score += tmp.first, full_score += tmp.second;
 
     tmp = iterator_advance_test();
+    score += tmp.first, full_score += tmp.second;
+
+    tmp = iterator_distance_test();
     score += tmp.first, full_score += tmp.second;
 
     return {score, full_score};
