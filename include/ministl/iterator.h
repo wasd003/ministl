@@ -49,8 +49,8 @@ template<typename T>
 struct iterator_traits<const T*> {
     using iterator_category = random_access_iterator_tag;
     using value_type = T;
-    using reference = T&;
-    using pointer = T*;
+    using reference = const T&;
+    using pointer = const T*;
     using difference_type = ptrdiff_t;
 };
 
