@@ -1,6 +1,7 @@
 #pragma once
 #include <iterator>
 #include <ministl/type_traits.h>
+#include <type_traits>
 
 namespace ministl
 {
@@ -9,10 +10,10 @@ namespace ministl
  * 5 iterator tag
  */
 struct input_iterator_tag {};
-struct ouput_iterator_tag {};
-struct forward_iterator_tag {};
-struct bidirectional_iterator_tag {};
-struct random_access_iterator_tag {};
+struct output_iterator_tag {};
+struct forward_iterator_tag : public input_iterator_tag {};
+struct bidirectional_iterator_tag : public forward_iterator_tag {};
+struct random_access_iterator_tag : public bidirectional_iterator_tag {};
 
 /**
  * iterator traits for non-pointer
@@ -54,19 +55,51 @@ struct iterator_traits<const T*> {
     using difference_type = ptrdiff_t;
 };
 
+template<typename Iter, typename TargetCategory, typename = void>
+struct is_iterator_helper
+{};
+
+template<typename Iter, typename TargetCategory>
+struct is_iterator_helper<Iter, TargetCategory,
+    typename std::enable_if_t<std::is_convertible<typename Iter::iterator_category, TargetCategory>::value>>
+    :ministl::true_type
+{};
+
+template<typename Iter, typename TargetCategory>
+struct is_iterator_helper<Iter, TargetCategory,
+    typename std::enable_if_t<!std::is_convertible<typename Iter::iterator_category, TargetCategory>::value>>
+    :ministl::false_type
+{};
+
+/**
+ * iterator category checker
+ */
+template<typename Iter>
+struct is_input_iterator : is_iterator_helper<Iter, input_iterator_tag> {};
+
+template<typename Iter>
+struct is_output_iterator : is_iterator_helper<Iter, output_iterator_tag> {};
+
+template<typename Iter>
+struct is_forward_iterator : is_iterator_helper<Iter, forward_iterator_tag> {};
+
+template<typename Iter>
+struct is_bidirectional_iterator : is_iterator_helper<Iter, bidirectional_iterator_tag> {};
+
+template<typename Iter>
+struct is_random_access_iterator : is_iterator_helper<Iter, random_access_iterator_tag> {};
+
 /**
  * some other ierator traits.
  * just for practice
  */
 
 template<typename Iter, typename = ministl::__void_t<>>
-struct has_value_type {
-    constexpr static bool value = false;
-};
+struct has_value_type : ministl::false_type
+{};
 
 template<typename Iter>
-struct has_value_type<Iter, typename Iter::value_type> {
-    constexpr static bool value = true;
-};
+struct has_value_type<Iter, typename Iter::value_type> : ministl::true_type
+{};
 
 }

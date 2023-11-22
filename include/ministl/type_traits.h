@@ -6,14 +6,18 @@ namespace ministl
 template<typename...>
 using __void_t = void;
 
-template<typename T, typename U>
-struct is_same {
+struct true_type {
+    constexpr static bool value = true;
+};
+
+struct false_type {
     constexpr static bool value = false;
 };
 
+template<typename T, typename U>
+struct is_same : false_type {};
+
 template<typename T>
-struct is_same<T, T> {
-    constexpr static bool value = true;
-};
+struct is_same<T, T> : true_type {};
 
 }
