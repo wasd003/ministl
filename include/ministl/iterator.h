@@ -106,4 +106,44 @@ template<typename Iter>
 struct has_value_type<Iter, typename Iter::value_type> : ministl::true_type
 {};
 
+/**
+ * generic operation on iterator
+ */
+
+/**
+ * 1. advance operation
+ */
+
+// advance for InputIterator && Forward Iterator
+template<typename Iter, typename DistanceType>
+void advance_dispatch(Iter& iter, DistanceType n, input_iterator_tag) {
+    assert(n >= 0);
+    while (n -- ) ++ iter;
+}
+
+// advance for BidirectionalIterator
+template<typename Iter, typename DistanceType>
+void advance_dispatch(Iter& iter, DistanceType n, bidirectional_iterator_tag) {
+    if (n > 0) {
+        for (auto i = 0; i < n; i ++ ) ++ iter;
+    } else {
+        for (auto i = 0; i > -n; i -- ) -- iter;
+    }
+}
+
+// advance for RandomAccessIterator
+template<typename Iter, typename DistanceType>
+void advance_dispatch(Iter& iter, DistanceType n, random_access_iterator_tag) {
+    iter += n;
+}
+
+template<typename Iter, typename DistanceType>
+void advance(Iter& iter, DistanceType n) {
+    advance_dispatch(iter, n, typename ministl::iterator_traits<Iter>::iterator_category {});
+}
+
+/**
+ * distance operation
+ */
+
 }

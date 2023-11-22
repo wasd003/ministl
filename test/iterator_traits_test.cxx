@@ -71,6 +71,18 @@ test_result iterator_category_checker_test() {
     return {0, 0};
 };
 
+test_result iterator_advance_test() {
+    int score = 0, full_score = 0;
+    ministl::vector<int> vec = {1, 2, 3, 4, 5};
+    ministl::vector<int>::iterator iter = vec.begin();
+    ministl::advance(iter, 2);
+    full_score ++ ;
+    assert(*iter == 3);
+    score ++ ;
+
+    return {score, full_score};
+}
+
 test_result iterator_traits_test() {
     int score = 0, full_score = 0;
     test_result tmp;
@@ -79,6 +91,9 @@ test_result iterator_traits_test() {
     score += tmp.first, full_score += tmp.second;
 
     tmp = iterator_category_checker_test();
+    score += tmp.first, full_score += tmp.second;
+
+    tmp = iterator_advance_test();
     score += tmp.first, full_score += tmp.second;
 
     return {score, full_score};
