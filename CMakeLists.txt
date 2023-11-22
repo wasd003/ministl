@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 green_message("BUILD LEVEL: ${BUILD_LEVEL}")
 
-file (GLOB SRC *.cxx)
+file (GLOB SRC *.cxx test/*.cxx)
 
 add_executable(${EXE} ${SRC})
 
