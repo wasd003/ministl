@@ -1,3 +1,3 @@
 #!/bin/bash
 
-cgdb $MINISTL_ROOT/build/ministl
+cgdb -n -x $MINISTL_ROOT/.gdbinit $MINISTL_ROOT/build/ministl

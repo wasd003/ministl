@@ -1,4 +1,5 @@
 #pragma once
+#include <exception>
 #include <ministl/log.h>
 #include <ministl/reverse_iterator.h>
 #include <cstdlib>
@@ -18,6 +19,7 @@ public:
     using size_type = size_t;
     using iterator = T*;
     using byte = uint8_t;
+    using pointer = value_type*;
 
 private:
     size_type capacity;
@@ -28,8 +30,18 @@ private:
 
     constexpr static size_type value_size = sizeof (T);
 
+    void release_vector(pointer& begin_pointer, pointer& end_pointer) {
+        // destruct object
+        for (pointer cur = begin_pointer; cur != end_pointer; cur ++ )
+            cur->~T();
+        // release memory
+        byte *raw = reinterpret_cast<byte *>(begin_pointer);
+        ::delete[] raw;
+        begin_pointer = end_pointer = nullptr;
+    }
+
     void grow() {
-        auto old_begin = begin_iter;
+        auto old_begin = begin_iter, old_end = end_iter;
         auto old_size = size();
         capacity <<= 1;
         begin_iter = reinterpret_cast<iterator>(::new byte[value_size * capacity]);
@@ -37,7 +49,7 @@ private:
         for (int i = 0; i < old_size; i ++ ) {
             begin_iter[i] = std::move(old_begin[i]);
         }
-        ::delete[] old_begin;
+        release_vector(old_begin, old_end);
     }
 
 public:
@@ -83,7 +95,7 @@ public:
      */
     vector& operator=(const vector& rhs) {
         if (this == &rhs) return *this;
-        ::delete[] begin_iter;
+        release_vector(begin_iter, end_iter);
         capacity = rhs.capacity;
         begin_iter = reinterpret_cast<iterator>(::new byte[rhs.capacity * value_size]);
         end_iter = begin_iter + rhs.size();
@@ -93,7 +105,7 @@ public:
     }
 
     vector& operator=(const std::initializer_list<value_type>& list) {
-        ::delete []begin_iter;
+        release_vector(begin_iter, end_iter);
         capacity = std::max(min_capacity, list.size());
         begin_iter = reinterpret_cast<iterator>(::new byte[capacity * value_size]);
         end_iter = begin_iter + list.size();
@@ -109,7 +121,7 @@ public:
 
     vector& operator=(vector&& rhs) {
         assert(this != &rhs);
-        ::delete[] begin_iter;
+        release_vector(begin_iter, end_iter);
         capacity = rhs.capacity;
         begin_iter = rhs.begin_iter;
         end_iter = rhs.end_iter;
@@ -119,8 +131,12 @@ public:
     }
 
     ~vector() {
-        ::delete[] begin_iter;
-        begin_iter = end_iter = nullptr;
+        try {
+            release_vector(begin_iter, end_iter);
+        } catch (const std::exception& err) {
+            debug(err.what());
+            std::abort();
+        }
     }
 
 

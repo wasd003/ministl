@@ -77,6 +77,17 @@ static test_result test_n_ctor() {
     return {score, full_score};
 }
 
+static test_result test_dtor() {
+    int n = 100, score = 0, full_score = 0;
+    {
+        ministl::vector<test_struct> vec;
+        vec.emplace_back(1, 2);
+        full_score ++ ;
+    }
+    score ++ ;
+    return {score, full_score};
+}
+
 static test_result test_n_ele_ctor() {
     int n = 100, score = 0, full_score = 0;
     ministl::vector<test_struct> vec(n, {42, 24});
@@ -162,7 +173,10 @@ static test_result test_reverse_iterator() {
 test_result vector_test() {
     int score = 0, full_score = 0;
 
-    auto tmp = basic_test();
+    auto tmp = test_dtor();
+    score += tmp.first, full_score += tmp.second;
+
+    tmp = basic_test();
     score += tmp.first, full_score += tmp.second;
 
     tmp = test_n_ctor();
