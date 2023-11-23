@@ -170,6 +170,39 @@ static test_result test_reverse_iterator() {
     return {score, full_score};
 }
 
+static test_result test_assign() {
+    int score = 0, full_score = 0;
+    { // test assign larger than capacity
+        ministl::vector<int> v;
+        v.assign(32, 42);
+        assert(v.size() == 32);
+        for (int i = 0; i < v.size(); i ++ ) {
+            assert(v[i] == 42);
+        }
+        score ++ , full_score ++ ;
+    }
+
+    { // test assign smaller than capacity
+        ministl::vector<int> v;
+        v.assign(8, 42);
+        assert(v.size() == 8);
+        for (int i = 0; i < v.size(); i ++ ) {
+            assert(v[i] == 42);
+        }
+        score ++ , full_score ++ ;
+    }
+
+    { // test assign larger then size()
+        ministl::vector<int> v(8, 12);
+        v.assign(12, 42);
+        assert(v.size() == 12);
+        for (int i = 0; i < v.size(); i ++ ) {
+            assert(v[i] == 42);
+        }
+        score ++ , full_score ++ ;
+    }
+}
+
 test_result vector_test() {
     int score = 0, full_score = 0;
 
@@ -198,6 +231,9 @@ test_result vector_test() {
     score += tmp.first, full_score += tmp.second;
 
     tmp = test_reverse_iterator();
+    score += tmp.first, full_score += tmp.second;
+
+    tmp = test_assign();
     score += tmp.first, full_score += tmp.second;
 
     return {score, full_score};

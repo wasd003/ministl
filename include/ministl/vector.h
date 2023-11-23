@@ -1,11 +1,12 @@
 #pragma once
-#include <exception>
 #include <ministl/log.h>
 #include <ministl/reverse_iterator.h>
+#include <ministl/algorithm.h>
 #include <cstdlib>
 #include <cstdint>
 #include <algorithm>
 #include <initializer_list>
+#include <exception>
 #include <stdexcept>
 #include <cassert>
 
@@ -67,10 +68,8 @@ public:
         for (int i = 0; i < n; i ++ ) begin_iter[i] = init_val;
     }
 
-    template<typename Iter>
-    vector(Iter first, Iter second) : 
+    vector(iterator first, iterator second) : 
         vector(second > first ? (second - first) : 0) {
-        static_assert(std::is_same_v<Iter, iterator>);
         size_type n = second - first;
         for (int i = 0; i < n; i ++, first ++ )
             begin_iter[i] = *first;
@@ -176,6 +175,23 @@ public:
         return (*this)[idx];
     }
 
+    void assign(size_type n, const value_type& val);
+
+    /**
+     * caller of this function should ensure begin_erase_iter <= end_erase_iter
+     */
+    void erase(iterator begin_erase_iter, iterator end_erase_iter) {
+        for (auto it = begin_erase_iter; it != end_erase_iter; it ++ ) {
+            it->~T();
+        }
+    }
+
+    void swap(vector& rhs) {
+        ministl::swap(capacity, rhs.capacity);
+        ministl::swap(begin_iter, rhs.begin_iter);
+        ministl::swap(end_iter, rhs.end_iter);
+    }
+
 
     /**
      * Iterator
@@ -229,6 +245,19 @@ void vector<T>::emplace_back(Args&&... args) {
     // TODO: use ministl:forward
     ::new (end_iter) value_type(std::forward<Args>(args)...);
     end_iter ++ ;
+}
+
+template<typename T>
+void vector<T>::assign(size_type n, const value_type &val) {
+    if (n > capacity) {
+        auto tmp = vector<T> (n, val);
+        swap(tmp);
+    } else {
+        auto new_end_iter = begin_iter + n;
+        ministl::fill(begin_iter, new_end_iter, val);
+        if (new_end_iter < end_iter) erase(new_end_iter, end_iter);
+        end_iter = new_end_iter;
+    } 
 }
 
 };
