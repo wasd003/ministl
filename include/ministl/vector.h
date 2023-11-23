@@ -162,7 +162,15 @@ public:
         return begin_iter[idx];
     }
 
+    const value_type& operator[](int idx) const {
+        return begin_iter[idx];
+    }
+
     value_type& at(int idx) {
+        return const_cast<value_type&> (static_cast<const vector *>(this)->at(idx));
+    }
+
+    const value_type& at(int idx) const {
         if (idx < 0 || idx >= size())
             throw std::runtime_error("index outof bound");
         return (*this)[idx];
