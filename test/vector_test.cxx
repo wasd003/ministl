@@ -230,6 +230,20 @@ static test_result test_sort() {
     return {score, full_score};
 }
 
+int dtor_cnt = 0;
+static test_result test_pop_back() {
+    int score = 0, full_score = 0;
+    struct tmp_struct {
+        ~tmp_struct() {
+            dtor_cnt ++ ;
+        }
+    };
+    int n = 3;
+    ministl::vector<tmp_struct> vec(n);
+    while (vec.size()) vec.pop_back();
+    assert(dtor_cnt == n);
+}
+
 test_result vector_test() {
     int score = 0, full_score = 0;
 
@@ -264,6 +278,9 @@ test_result vector_test() {
     score += tmp.first, full_score += tmp.second;
 
     tmp = test_sort();
+    score += tmp.first, full_score += tmp.second;
+
+    tmp = test_pop_back();
     score += tmp.first, full_score += tmp.second;
 
     return {score, full_score};

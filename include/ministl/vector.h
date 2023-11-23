@@ -149,6 +149,12 @@ public:
     template<typename... Args>
     void emplace_back(Args&&... args);
 
+    void pop_back() {
+        assert(size());
+        auto it =  -- end_iter;
+        it->~T();
+    }
+
     size_type size() const noexcept {
         return (end_iter - begin_iter);
     }
