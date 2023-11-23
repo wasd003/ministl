@@ -42,4 +42,11 @@ void sort(Iter begin, Iter end) {
     sort(begin, end, [](auto first, auto second) { return first < second; } );
 }
 
+template<typename Iter>
+void reverse(Iter begin, Iter end) {
+    for (auto i = begin, j = end - 1; i < j; i ++ , j -- ) {
+        swap(*i, *j);
+    }
+}
+
 }

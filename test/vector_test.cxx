@@ -242,6 +242,20 @@ static test_result test_pop_back() {
     ministl::vector<tmp_struct> vec(n);
     while (vec.size()) vec.pop_back();
     assert(dtor_cnt == n);
+    score ++ , full_score ++ ;
+    return {score, full_score};
+}
+
+static test_result test_reverse() {
+    int score = 0, full_score = 0;
+    ministl::vector<int> vec = {1, 2, 3, 4, 5};
+    ministl::reverse(vec.begin(), vec.end());
+    for (int i = 0, j = 5; i < vec.size(); i ++ , j -- ) {
+        assert(vec[i] == j);
+        score ++ ;
+        full_score ++ ;
+    }
+    return {score, full_score};
 }
 
 test_result vector_test() {
@@ -281,6 +295,9 @@ test_result vector_test() {
     score += tmp.first, full_score += tmp.second;
 
     tmp = test_pop_back();
+    score += tmp.first, full_score += tmp.second;
+
+    tmp = test_reverse();
     score += tmp.first, full_score += tmp.second;
 
     return {score, full_score};
