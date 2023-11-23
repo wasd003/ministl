@@ -1,4 +1,6 @@
+#include "ministl/iterator.h"
 #include <ministl/log.h>
+#include <functional>
 
 namespace ministl
 {
@@ -15,6 +17,29 @@ void swap(ValueType& first, ValueType& second) {
     auto tmp = first;
     first = second;
     second = tmp;
+}
+
+// TODO: replace std::function with ministl ver.
+template<typename Iter>
+void sort(Iter begin, Iter end, std::function<bool(
+            typename ministl::iterator_traits<Iter>::value_type,
+            typename ministl::iterator_traits<Iter>::value_type)> cmp) {
+    if (begin + 1 >= end) return;
+    auto left = begin - 1, right = end;
+    auto pivot = *begin; // TODO: random pivot
+    while (left < right) {
+        do left ++ ; while (cmp(*left, pivot) && *left != pivot);
+        do right -- ; while (!cmp(*right, pivot) && *right != pivot);
+        if (left < right) swap(*left, *right);
+    }
+    right ++ ;
+    sort(begin, right, cmp);
+    sort(right, end, cmp);
+}
+
+template<typename Iter>
+void sort(Iter begin, Iter end) {
+    sort(begin, end, [](auto first, auto second) { return first < second; } );
 }
 
 }

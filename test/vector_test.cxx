@@ -201,6 +201,33 @@ static test_result test_assign() {
         }
         score ++ , full_score ++ ;
     }
+
+    return {score, full_score};
+}
+
+static test_result test_sort() {
+    int score = 0, full_score = 0;
+    { // test normal sort
+        ministl::vector<int> vec = {3, 5, 1};
+        ministl::sort(vec.begin(), vec.end());
+        for (int i = 1; i < vec.size(); i ++ ) {
+            assert(vec[i] >= vec[i - 1]);
+        }
+        score ++ , full_score ++ ;
+    }
+
+    { // test custom sort
+        ministl::vector<int> vec = {5, 1, 3, 1};
+        ministl::sort(vec.begin(), vec.end(), [](auto a, auto b) {
+                return a >= b;
+        });
+        for (int i = 1; i < vec.size(); i ++ ) {
+            assert(vec[i] <= vec[i - 1]);
+        }
+        score ++ , full_score ++ ;
+    }
+
+    return {score, full_score};
 }
 
 test_result vector_test() {
@@ -234,6 +261,9 @@ test_result vector_test() {
     score += tmp.first, full_score += tmp.second;
 
     tmp = test_assign();
+    score += tmp.first, full_score += tmp.second;
+
+    tmp = test_sort();
     score += tmp.first, full_score += tmp.second;
 
     return {score, full_score};

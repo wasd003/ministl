@@ -1,1 +1,2 @@
-b basic_test
+b sort
+b cmp
