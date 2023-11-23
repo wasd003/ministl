@@ -1,2 +1,1 @@
-b sort
-b cmp
+b emplace

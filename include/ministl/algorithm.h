@@ -1,4 +1,4 @@
-#include "ministl/iterator.h"
+#include <ministl/iterator.h>
 #include <ministl/log.h>
 #include <functional>
 
@@ -47,6 +47,14 @@ void reverse(Iter begin, Iter end) {
     for (auto i = begin, j = end - 1; i < j; i ++ , j -- ) {
         swap(*i, *j);
     }
+}
+
+template<typename Iter, typename ValueType>
+Iter find(Iter begin, Iter end, ValueType target) {
+    for (auto i = begin; i != end; i ++ ) {
+        if (*i == target) return i;
+    }
+    return end;
 }
 
 }

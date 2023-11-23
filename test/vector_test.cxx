@@ -258,6 +258,26 @@ static test_result test_reverse() {
     return {score, full_score};
 }
 
+static test_result test_emplace() {
+    int score = 0, full_score = 0;
+    ministl::vector<int> vec;
+    int n = 5;
+    for (int i = 0; i < n; i ++ ) {
+        vec.emplace(vec.begin(), i);
+    }
+    std::cout << vec;
+    auto it = ministl::find(vec.begin(), vec.end(), 2);
+    vec.emplace(it, 42);
+    std::cout << vec;
+    for (int i = 0; i < n; i ++ ) {
+        vec.emplace(vec.end(), i);
+    }
+    assert((vec == ministl::vector<int> {4, 3, 42, 2, 1, 0, 0, 1, 2, 3, 4}));
+    std::cout << vec;
+
+    return {score, full_score};
+}
+
 test_result vector_test() {
     int score = 0, full_score = 0;
 
@@ -298,6 +318,9 @@ test_result vector_test() {
     score += tmp.first, full_score += tmp.second;
 
     tmp = test_reverse();
+    score += tmp.first, full_score += tmp.second;
+
+    tmp = test_emplace();
     score += tmp.first, full_score += tmp.second;
 
     return {score, full_score};

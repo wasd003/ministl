@@ -138,6 +138,15 @@ public:
         }
     }
 
+    bool operator==(const vector& rhs) const {
+        if (size() != rhs.size()) return false;
+        for (int i = 0; i < size(); i ++ ) {
+            if (begin_iter[i] != rhs.begin_iter[i])
+                return false;
+        }
+        return true;
+    }
+
 
     /**
      * Operation
@@ -148,6 +157,9 @@ public:
 
     template<typename... Args>
     void emplace_back(Args&&... args);
+
+    template<typename... Args>
+    void emplace(const iterator iter, Args&&... args);
 
     void pop_back() {
         assert(size());
@@ -225,6 +237,15 @@ public:
     const ministl::reverse_iterator<iterator> rend() const {
         return reverse_iterator<iterator> (begin());
     }
+
+    // just for debug
+    friend std::ostream& operator<<(std::ostream& os, const vector& rhs) {
+        for (auto i = 0; i < rhs.size(); i ++ ) {
+            os << rhs[i] << " ";
+        }
+        os << std::endl;
+        return os;
+    }
 };
 
 template<typename T>
@@ -264,6 +285,22 @@ void vector<T>::assign(size_type n, const value_type &val) {
         if (new_end_iter < end_iter) erase(new_end_iter, end_iter);
         end_iter = new_end_iter;
     } 
+}
+
+template<typename T>
+template<typename... Args>
+void vector<T>::emplace(const iterator iter, Args&&... args) {
+    // FIXME: need to find target position first
+    auto offset = ministl::distance(begin_iter, iter);
+    if (size() >= capacity) [[unlikely]] {
+        grow();
+    }
+    assert(capacity > size());
+    for (int i = size() - 1; i >= offset; i -- ) {
+        begin_iter[i + 1] = begin_iter[i];
+    }
+    ::new(begin_iter + offset) T(std::forward<Args>(args)...);
+    end_iter ++ ;
 }
 
 };
